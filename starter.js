@@ -1,28 +1,47 @@
-var GUN = WEAPON_PISTOL;
-var ENEMY = getNearestEnemy();
+var enemy = getNearestEnemy();
 var weapon = getWeapon();
 
 // first round
 if (weapon === null) {
-     setWeapon(GUN);
+    setWeapon(WEAPON_PISTOL);
+    weapon = getWeapon();
 }
 
-var enemy_cell = getCell(ENEMY);
-var weapon_cell = getCellToUseWeapon(ENEMY);
+var enemy_cell = getCell(enemy);
+var pistol_cell = getCellToUseWeapon(WEAPON_PISTOL, enemy);
+var machine_cell = getCellToUseWeapon(WEAPON_MACHINE_GUN, enemy);
 var my_cell = getCell();
-var weapon_distance = getCellDistance(weapon_cell, my_cell);
+var pistol_distance = getCellDistance(pistol_cell, my_cell);
+var machine_distance = getCellDistance(machine_cell, my_cell);
 var moves = getMP();
 
-if (weapon_distance <= moves) {
-    moveTowardCell(weapon_cell);
-    if (canUseWeapon(ENEMY)) {
-        while (getTP() >= getWeaponCost(GUN)) {
-            useWeapon(ENEMY);
-        }
-        moveAwayFrom(ENEMY);
+function set_weapon(gun, current_weapon) {
+    if (current_weapon !== gun) {
+        setWeapon(gun);
     }
-} else if (weapon_distance > 2 * moves) {
-    moveTowardCell(weapon_cell);
+}
+
+
+function use_gun(gun, cell, weapon, enemy) {
+    set_weapon(gun, weapon);
+    moveTowardCell(cell);
+    while (getTP() >= getWeaponCost(gun)) {
+        useWeapon(enemy);
+    }
+    moveAwayFrom(enemy);
+}
+
+function forward(cell, weapon) {
+    set_weapon(WEAPON_PISTOL, weapon);
+    moveTowardCell(cell);
+}
+
+if (machine_distance <= moves) {
+    use_gun(WEAPON_MACHINE_GUN, machine_cell, weapon, enemy);
+} else if (pistol_distance < moves) {
+    use_gun(WEAPON_PISTOL, pistol_cell, weapon, enemy);
+} else if (pistol_distance > 2 * moves) {
+    forward(pistol_cell, weapon);
 } else if (MAX_TURNS - getTurn() < 10) {
-    moveTowardCell(weapon_cell);
+    forward(pistol_cell, weapon);
 }
