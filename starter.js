@@ -48,7 +48,7 @@ function use_chip(cell, chip, enemy) {
 }
 
 // if we are far, we can use spark and hide away
-if (enemy_distance > getChipMaxRange(CHIP_SPARK) && spark_distance <= moves) {
+if (enemy_distance >= getChipMaxRange(CHIP_SPARK) - 1 && spark_distance <= moves) {
     use_chip(spark_cell, CHIP_SPARK, enemy);
 // if we are close enough, let's use our strongest weapon
 } else if (machine_distance <= moves) {
