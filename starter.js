@@ -23,4 +23,6 @@ if (weapon_distance <= moves) {
     }
 } else if (weapon_distance > 2 * moves) {
     moveTowardCell(weapon_cell);
+} else if (MAX_TURNS - getTurn() < 10) {
+    moveTowardCell(weapon_cell);
 }
